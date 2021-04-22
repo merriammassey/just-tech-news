@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { Post, User } = require('../../models');
+const { Post, User, Vote } = require('../../models');
 
 // get all posts
 router.get('/', (req, res) => {
@@ -66,6 +66,17 @@ router.post('/', (req, res) => {
       });
   });
 
+// PUT /api/posts/upvote
+router.put('/upvote', (req, res) => {
+//using the Vote model to create a vote
+Vote.create({
+    user_id: req.body.user_id,
+    post_id: req.body.post_id
+  })
+    .then(dbPostData => res.json(dbPostData))
+    .catch(err => res.json(err));
+//then querying on that post to get an updated vote count.
+});
   //replace the title of the post
   router.put('/:id', (req, res) => {
     Post.update(
