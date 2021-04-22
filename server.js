@@ -13,6 +13,6 @@ app.use(routes);
 
 // turn on connection to db and server
 //change to true when table relationships are updated, test, then switch back to false and restart
-sequelize.sync({ force: true }).then(() => {
+sequelize.sync({ force: false }).then(() => {
   app.listen(PORT, () => console.log('Now listening'));
 });

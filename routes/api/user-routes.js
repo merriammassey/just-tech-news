@@ -1,7 +1,7 @@
 //create five routes that will work with the User model to perform CRUD operations.
 
 const router = require('express').Router();
-const { User } = require('../../models');
+const { User, Post, Vote } = require("../../models");
 
 // GET /api/users
 router.get('/', (req, res) => {
@@ -22,9 +22,24 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
     User.findOne({
         attributes: { exclude: ['password'] },
-        where: {
+        //use through table association to show title of user's votes
+        include: [
+            {
+                //post model through the vote table
+              model: Post,
+              attributes: ['id', 'title', 'post_url', 'created_at']
+            },
+            {
+              model: Post,
+              attributes: ['title'],
+              through: Vote,
+              as: 'voted_posts'
+            }
+          ],
+          where: {
           id: req.params.id
         }
+        
       })
     .then(dbUserData => {
       if (!dbUserData) {
