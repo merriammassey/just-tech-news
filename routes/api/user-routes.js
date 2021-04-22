@@ -22,24 +22,31 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
     User.findOne({
         attributes: { exclude: ['password'] },
-        //use through table association to show title of user's votes
+        where: {
+            id: req.params.id
+          },//use through table association to show title of user's votes
         include: [
             {
                 //post model through the vote table
               model: Post,
               attributes: ['id', 'title', 'post_url', 'created_at']
             },
+            // include the Comment model here:
+        {
+            model: Comment,
+            attributes: ['id', 'comment_text', 'created_at'],
+            include: {
+            model: Post,
+            attributes: ['title']
+            }
+        },
             {
               model: Post,
               attributes: ['title'],
               through: Vote,
               as: 'voted_posts'
             }
-          ],
-          where: {
-          id: req.params.id
-        }
-        
+          ]
       })
     .then(dbUserData => {
       if (!dbUserData) {
